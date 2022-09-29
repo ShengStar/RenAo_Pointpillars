@@ -218,8 +218,10 @@ class AnchorHeadTemplate(nn.Module):
     def get_loss(self):
         cls_loss, tb_dict = self.get_cls_layer_loss()
         box_loss, tb_dict_box = self.get_box_reg_layer_loss()
+        score = self.forward_ret_dict['score3']
+        score = sum(score)/len(np.nonzero(score)[0]) * 3
         tb_dict.update(tb_dict_box)
-        rpn_loss = cls_loss + box_loss
+        rpn_loss = cls_loss + box_loss + score
 
         tb_dict['rpn_loss'] = rpn_loss.item()
         return rpn_loss, tb_dict
